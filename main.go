@@ -3,7 +3,6 @@ package main
 import (
 	"aws-news-notify/providers"
 	"aws-news-notify/providers/discord"
-	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -25,15 +24,16 @@ func initializeProviders(configData []byte) {
 
 func main() {
 
+	// news, err := awsNews.Fetch(2020, 01)
 	news, err := awsNews.Yesterday()
 	if err != nil {
 		log.Fatal(err)
 	}
-	// news, _ := awsNews.Fetch(2020, 01)
-	fmt.Println("News count: ", len(news))
+	// fmt.Println("News count: ", len(news))
 
 	providers := providers.GetProviders()
 
+	// fmt.Printf("%#v\n", providers)
 	for _, p := range providers {
 		p.Notify(news)
 	}

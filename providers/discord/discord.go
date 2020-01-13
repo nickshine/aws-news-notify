@@ -1,16 +1,21 @@
 package discord
 
 import (
+	"aws-news-notify/providers"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 
-	"aws-news-notify/providers"
-
 	awsNews "github.com/circa10a/go-aws-news"
 	"gopkg.in/yaml.v2"
 )
+
+type config struct {
+	Providers struct {
+		Provider Provider `yaml:"discord"`
+	} `yaml:"providers"`
+}
 
 // Provider is an implementation of the `aws-news-notify` Provider interface.
 type Provider struct {
@@ -20,15 +25,12 @@ type Provider struct {
 
 // Init initializes the provider from the provided config.
 func Init(configData []byte) {
-
-	d := struct {
-		Provider Provider `yaml:"discord"`
-	}{}
-	if err := yaml.Unmarshal(configData, &d); err != nil {
+	var c config
+	if err := yaml.Unmarshal(configData, &c); err != nil {
 		panic(err)
 	}
 
-	providers.RegisterProvider(&d.Provider)
+	providers.RegisterProvider(&c.Providers.Provider)
 }
 
 // Enabled returns true if the provider is enabled in the config.

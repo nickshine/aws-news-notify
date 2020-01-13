@@ -11,7 +11,7 @@ type Provider interface {
 	Enabled() bool
 }
 
-// Providers is a slice of registered providers.
+// providers is a slice of registered providers.
 var providers []Provider
 
 // GetProviders returns a list of registered providers.
