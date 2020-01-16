@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 
 	awsNews "github.com/circa10a/go-aws-news"
 	"gopkg.in/yaml.v2"
@@ -24,9 +25,9 @@ type Provider struct {
 }
 
 // Init initializes the provider from the provided config.
-func Init(configData []byte) {
+func init() {
 	var c config
-	if err := yaml.Unmarshal(configData, &c); err != nil {
+	if err := yaml.Unmarshal(providers.Config, &c); err != nil {
 		panic(err)
 	}
 
@@ -46,15 +47,17 @@ func (*Provider) GetName() string {
 // Notify is the function executed to POST to a provider's webhook url.
 func (p *Provider) Notify(news awsNews.Announcements) {
 
+	var b strings.Builder
 	for _, v := range news {
-		res, err := http.PostForm(p.WebhookURL, url.Values{
-			"username": {"AWS News"},
-			"content":  {fmt.Sprintf("Title: %v\nLink: %v\nDate: %v\n", v.Title, v.Link, v.PostDate)},
-		})
-		if err != nil {
-			log.Println(err)
-		}
-
-		res.Body.Close()
+		b.WriteString(fmt.Sprintf("**Title:** *%v*\n**Link:** %v\n**Date:** %v\n", v.Title, v.Link, v.PostDate))
 	}
+
+	res, err := http.PostForm(p.WebhookURL, url.Values{
+		"username": {"AWS News"},
+		"content":  {b.String()},
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	res.Body.Close()
 }

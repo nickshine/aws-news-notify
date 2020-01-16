@@ -1,8 +1,21 @@
 package providers
 
 import (
+	"io/ioutil"
+
 	awsNews "github.com/circa10a/go-aws-news"
 )
+
+// Config is the raw data read from the provider configuration file.
+var Config = readConfig()
+
+func readConfig() []byte {
+	b, err := ioutil.ReadFile("config.yaml")
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
 
 // Provider is implemented in each webhook provider in providers/.
 type Provider interface {

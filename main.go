@@ -2,24 +2,14 @@ package main
 
 import (
 	"aws-news-notify/providers"
-	"aws-news-notify/providers/discord"
-	"io/ioutil"
+	"fmt"
 	"log"
 
 	awsNews "github.com/circa10a/go-aws-news"
 )
 
 func init() {
-	b, err := ioutil.ReadFile("config.yaml")
-	if err != nil {
-		panic(err)
-	}
-
-	initializeProviders(b)
-}
-
-func initializeProviders(configData []byte) {
-	discord.Init(configData)
+	fmt.Println("main init")
 }
 
 func main() {
